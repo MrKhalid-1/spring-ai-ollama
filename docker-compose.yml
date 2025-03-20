@@ -1,0 +1,26 @@
+#version: '3.8'
+#
+#services:
+#  chromadb:
+#    image: ghcr.io/chroma-core/chroma:0.4.21
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - chroma_data:/chroma/chroma
+#      - ./schema:/schema
+#    environment:
+#      - CHROMA_DB_PATH=/chroma/chroma
+#
+#  schema_loader:
+#    image: python:3.9-slim
+#    volumes:
+#      - ./schema:/schema
+#      - ./load_schema_docker.py:/app/load.py
+#    depends_on:
+#      - chromadb
+#    command: >
+#      sh -c "pip install chromadb &&
+#      python /app/load.py"
+#
+#volumes:
+#  chroma_data:  # Yeh volume define kiya gaya hai
