@@ -1,35 +1,31 @@
 //package com.example.spring_ai_ollama.controller;
 //
-//import dev.langchain4j.store.embedding.faiss.FaissEmbeddingStore;
-//import org.springframework.ai.ollama.OllamaClient;
-//import org.springframework.web.bind.annotation.*;
+//import com.example.spring_ai_ollama.service.ChromaService;
+//import com.example.spring_ai_ollama.service.LlamaService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
+//import org.springframework.web.bind.annotation.RequestMapping;
+//import org.springframework.web.bind.annotation.RestController;
+//
+//import java.util.Map;
 //
 //@RestController
-//@RequestMapping("/api/chat")
-//public class AIChatController {
+//@RequestMapping("/chat")
+//public class QueryController {
 //
-//    private final FaissEmbeddingStore vectorStore;
-//    private final OllamaClient ollamaClient;
+//    @Autowired
+//    private ChromaService chromaService;
 //
-//    public AIChatController(FaissEmbeddingStore vectorStore, OllamaClient ollamaClient) {
-//        this.vectorStore = vectorStore;
-//        this.ollamaClient = ollamaClient;
-//    }
+//    @Autowired
+//    private LlamaService llamaService;
 //
 //    @PostMapping("/ask")
-//    public String askAI(@RequestParam String question) {
-//        // Retrieve schema from vector store
-//        String schema = vectorStore.toString();
-//
-//        // Generate SQL query using Ollama
-//        String prompt = "Given the database schema:\n" + schema +
-//                "\nGenerate an optimized SQL query for: " + question +
-//                "\nReturn only the SQL query without explanation.";
-//
-//        String sqlQuery = ollamaClient.generate(prompt);
-//
-//        System.out.println("Generated SQL: " + sqlQuery);
-//
-//        return sqlQuery;
+//    public ResponseEntity<?> askQuery(@RequestBody Map<String, Object> requestBody) {
+//        String userQuery = requestBody.get("query").toString();
+//        String context = chromaService.fetchContext(userQuery);
+//        String generatedQuery = llamaService.generateQuery(context);
+//        return ResponseEntity.ok(Map.of("generatedQuery", generatedQuery));
 //    }
 //}

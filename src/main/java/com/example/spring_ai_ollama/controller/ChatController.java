@@ -2,6 +2,7 @@ package com.example.spring_ai_ollama.controller;
 
 //import org.springframework.ai.chat.ChatClient;
 
+import com.example.spring_ai_ollama.service.ChromaService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,11 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
 
     private final ChatClient chatClient;
-//    private final JdbcTemplate jdbcTemplate;
-            
     @Autowired
-    public ChatController(ChatClient chatClient) {
+    private final ChromaService chromaService;
+
+    @Autowired
+    public ChatController(ChatClient chatClient, ChromaService chromaService) {
         this.chatClient = chatClient;
+        this.chromaService = chromaService;
+    }
+
+    @GetMapping("/ask")
+    public String askQuestion(@RequestParam String question) {
+        return chatClient.prompt()
+                .user(question)
+                .call()
+                .content();
     }
 
     @GetMapping("/generate")
@@ -63,12 +74,20 @@ public class ChatController {
                 .content();
     }
 
-    @GetMapping("/ask")
-    public String askQuestion(@RequestParam String question) {
+
+
+    @GetMapping("/get")
+    public String generate(@RequestParam String question) {
+        String context = chromaService.fetchContext(question);
+        String prompt = "Using the following MariaDB database schema context, generate a valid MariaDB SQL query that directly answers the question. " +
+                "Return ONLY the SQL query without any explanation or additional text.\n\n" +
+                "Schema Context:\n" + context + "\n" +
+                "Question: " + question;
         return chatClient.prompt()
-                .user(question)
+                .user(prompt)
                 .call()
                 .content();
     }
+
 }
 
